@@ -1,9 +1,11 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { View, StyleSheet, ScrollView, Pressable } from 'react-native';
 import { Text, Surface, ProgressBar, IconButton, Button, useTheme } from 'react-native-paper';
 import { Link } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React from 'react';
+import { api } from '../../src/services/api/apiService';
+import { getEndpoints } from '../../src/services/api/config';
 
 const GoalCard = ({ title, value, icon, targetValue, isCompleted, onToggle }) => {
 
@@ -149,6 +151,20 @@ export default function Home() {
       [key]: !prev[key]
     }));
   };
+
+  useEffect(() => {
+    const fetchGlideUsers = async () => {
+      try {
+        const endpoints = getEndpoints();
+        const response = await api.get(endpoints.users.glideUsers);
+        console.log('Glide Users Response:', response.data);
+      } catch (error) {
+        console.error('Error fetching glide users:', error);
+      }
+    };
+
+    fetchGlideUsers(); 
+  }, []);
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
