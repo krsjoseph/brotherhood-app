@@ -2,23 +2,29 @@ import { Tabs } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { StatusBar } from 'expo-status-bar';
 import { View } from 'react-native';
+import { useColorScheme } from '../../hooks/useColorScheme';
+import { Colors } from '../../constants/Colors';
 
 export default function TabsLayout() {
+  const colorScheme = useColorScheme() ?? 'light';
+  const colors = Colors[colorScheme];
+  
   return (
     <View style={{ flex: 1 }}>
-      <StatusBar style="light" />
+      <StatusBar style={colorScheme === 'dark' ? 'light' : 'dark'} />
       <Tabs screenOptions={{
-        tabBarActiveTintColor: '#007AFF',
-        tabBarInactiveTintColor: 'rgba(255, 255, 255, 0.6)',
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.icon,
         tabBarStyle: {
-          backgroundColor: '#001F2D',
-          borderTopWidth: 0,
+          backgroundColor: colors.background,
+          borderTopWidth: 1,
+          borderTopColor: colors.border,
         },
         headerStyle: {
-          backgroundColor: '#001F2D',
+          backgroundColor: colors.background,
         },
         headerTitleStyle: {
-          color: '#fff',
+          color: colors.text,
           fontFamily: 'Inter_600SemiBold',
         },
       }}>
@@ -61,4 +67,4 @@ export default function TabsLayout() {
       </Tabs>
     </View>
   );
-} 
+}

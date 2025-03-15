@@ -6,8 +6,12 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 import React from 'react';
 import { api } from '../../src/services/api/apiService';
 import { getEndpoints } from '../../src/services/api/config';
+import { Colors } from '../../constants/Colors';
+import { useColorScheme } from '../../hooks/useColorScheme';
 
 const GoalCard = ({ title, value, icon, targetValue, isCompleted, onToggle }) => {
+  const colorScheme = useColorScheme() ?? 'light';
+  const colors = Colors[colorScheme];
 
   const handleToggle = () => {
     onToggle();
@@ -15,15 +19,15 @@ const GoalCard = ({ title, value, icon, targetValue, isCompleted, onToggle }) =>
 
   return (
     <Surface style={[styles.goalCard, {
-      backgroundColor: isCompleted ? 'rgba(0, 122, 255, 0.15)' : 'rgba(255, 255, 255, 0.03)',
+      backgroundColor: isCompleted ? `${colors.primary}26` : '#FFFFFF', // 26 is 15% opacity in hex
       borderRadius: 16,
-      shadowColor: '#007AFF',
+      shadowColor: colors.primary,
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.1,
       shadowRadius: 8,
       elevation: 4,
       borderWidth: isCompleted ? 1 : 0,
-      borderColor: 'rgba(0, 122, 255, 0.3)',
+      borderColor: `${colors.primary}4D`, // 4D is 30% opacity in hex
       overflow: 'hidden',
     }]}>
       <Pressable onPress={handleToggle} style={styles.goalContent}>
@@ -31,7 +35,7 @@ const GoalCard = ({ title, value, icon, targetValue, isCompleted, onToggle }) =>
           <MaterialCommunityIcons 
             name={icon} 
             size={24} 
-            color={isCompleted ? '#007AFF' : 'rgba(255, 255, 255, 0.7)'} 
+            color={isCompleted ? colors.primary : colors.icon} 
           />
           <View style={[styles.toggleButton, isCompleted && styles.toggleButtonActive]}>
             {isCompleted && <MaterialCommunityIcons name="check" size={20} color="#fff" />}
@@ -39,13 +43,13 @@ const GoalCard = ({ title, value, icon, targetValue, isCompleted, onToggle }) =>
         </View>
         <View>
           <Text style={[styles.goalTitle, {
-            color: isCompleted ? '#007AFF' : '#fff',
+            color: isCompleted ? colors.primary : colors.text,
             textDecorationLine: isCompleted ? 'line-through' : 'none',
           }]}>{title}</Text>
           <Text style={[styles.goalTarget, {
             fontFamily: 'Inter_400Regular',
             fontSize: 13,
-            color: isCompleted ? 'rgba(0, 122, 255, 0.7)' : 'rgba(255, 255, 255, 0.6)',
+            color: isCompleted ? `${colors.primary}B3` : colors.icon, // B3 is 70% opacity in hex
             marginTop: 2,
           }]}>{targetValue}</Text>
         </View>
@@ -55,11 +59,14 @@ const GoalCard = ({ title, value, icon, targetValue, isCompleted, onToggle }) =>
 };
 
 const FreedomCard = ({ title, description, isCompleted, onToggle, icon }) => {
+  const colorScheme = useColorScheme() ?? 'light';
+  const colors = Colors[colorScheme];
+  
   return (
     <Surface style={[styles.freedomCard, {
-      backgroundColor: 'rgba(255, 255, 255, 0.03)',
+      backgroundColor: colors.card,
       borderRadius: 16,
-      shadowColor: '#007AFF',
+      shadowColor: colors.primary,
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.1,
       shadowRadius: 8,
@@ -68,11 +75,11 @@ const FreedomCard = ({ title, description, isCompleted, onToggle, icon }) => {
       <Pressable onPress={onToggle} style={styles.freedomContent}>
         <View style={styles.freedomHeader}>
           <View style={styles.freedomTitleRow}>
-            <MaterialCommunityIcons name={icon} size={24} color="rgba(255, 255, 255, 0.7)" />
+            <MaterialCommunityIcons name={icon} size={24} color={colors.icon} />
             <Text style={[styles.freedomTitle, { 
               fontFamily: 'Inter_600SemiBold',
               fontSize: 16,
-              color: '#fff',
+              color: colors.text,
               marginLeft: 12,
             }]}>{title}</Text>
           </View>
@@ -83,7 +90,7 @@ const FreedomCard = ({ title, description, isCompleted, onToggle, icon }) => {
         <Text style={[styles.freedomDescription, { 
           fontFamily: 'Inter_400Regular',
           fontSize: 14,
-          color: 'rgba(255, 255, 255, 0.7)',
+          color: colors.icon,
           marginTop: 12,
         }]}>{description}</Text>
       </Pressable>
@@ -92,12 +99,15 @@ const FreedomCard = ({ title, description, isCompleted, onToggle, icon }) => {
 };
 
 const QuickAccessButton = React.forwardRef(({ icon, label, onPress, style, ...props }, ref) => {
+  const colorScheme = useColorScheme() ?? 'light';
+  const colors = Colors[colorScheme];
+  
   return (
     <View style={[styles.quickAccessButtonContainer, style]} ref={ref}>
       <Surface style={[styles.quickAccessButton, {
-        backgroundColor: 'rgba(255, 255, 255, 0.03)',
+        backgroundColor: colors.card,
         borderRadius: 16,
-        shadowColor: '#007AFF',
+        shadowColor: colors.primary,
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
         shadowRadius: 8,
@@ -106,16 +116,16 @@ const QuickAccessButton = React.forwardRef(({ icon, label, onPress, style, ...pr
       }]}>
         <Pressable onPress={onPress} style={styles.quickAccessContent} {...props}>
           <View style={[styles.quickAccessIcon, {
-            backgroundColor: 'rgba(0, 122, 255, 0.1)',
+            backgroundColor: `${colors.primary}1A`, // 1A is 10% opacity in hex
             marginBottom: 12,
           }]}>
-            <MaterialCommunityIcons name={icon} size={22} color="#007AFF" />
+            <MaterialCommunityIcons name={icon} size={22} color={colors.primary} />
           </View>
           <Text 
             style={[styles.quickAccessLabel, { 
               fontFamily: 'Inter_500Medium',
               fontSize: 14,
-              color: '#fff',
+              color: colors.text,
               textAlign: 'center',
             }]}
             numberOfLines={2}
@@ -127,6 +137,9 @@ const QuickAccessButton = React.forwardRef(({ icon, label, onPress, style, ...pr
 });
 
 export default function Home() {
+  const colorScheme = useColorScheme() ?? 'light';
+  const colors = Colors[colorScheme];
+  
   const [freedoms, setFreedoms] = useState({
     mastermind: false,
     athletic: false,
@@ -163,11 +176,11 @@ export default function Home() {
       }
     };
 
-    fetchGlideUsers(); 
+    fetchGlideUsers(); 
   }, []);
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <ScrollView style={[styles.container, { backgroundColor: colors.background }]} contentContainerStyle={styles.content}>
       {/* Header Section */}
       <View style={styles.header}>
         <View style={[styles.proContainer, {
@@ -206,95 +219,82 @@ export default function Home() {
       {/* Freedoms Section */}
       <View style={styles.freedomsContainer}>
         <View style={styles.sectionHeader}>
-          <Text style={[styles.sectionTitle, { 
+          <Text style={{ 
             fontFamily: 'Inter_700Bold',
-            fontSize: 24,
-            color: '#fff',
-          }]}>UNCOM25</Text>
-          <Text style={[styles.dateText, { 
-            fontFamily: 'Inter_400Regular',
-            fontSize: 14,
-            color: 'rgba(255, 255, 255, 0.7)',
-          }]}>{new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</Text>
+            fontSize: 18,
+            color: colors.text,
+            marginBottom: 4,
+          }}>Your Freedom Goals</Text>
         </View>
-
-        <FreedomCard
-          title="Mastermind"
-          description="Share your plan for the day in the daily chat & share your end of day review"
+        
+        <FreedomCard 
+          title="Join a Mastermind Group" 
+          description="Connect with like-minded entrepreneurs to accelerate growth"
+          icon="account-group"
           isCompleted={freedoms.mastermind}
           onToggle={() => toggleFreedom('mastermind')}
-          icon="brain"
         />
-
-        <FreedomCard
-          title="Athletic"
-          description="Daily Dense Strength (10 minutes) & Skills & Mobility (10 minutes)"
+        
+        <FreedomCard 
+          title="Athletic Achievement" 
+          description="Complete a marathon or fitness milestone"
+          icon="run-fast"
           isCompleted={freedoms.athletic}
           onToggle={() => toggleFreedom('athletic')}
-          icon="dumbbell"
         />
-
-        <FreedomCard
-          title="Richer"
-          description="1THING each day to increase income (10 minutes) & Publish Everyday (10 minutes)"
+        
+        <FreedomCard 
+          title="Become 20% Richer" 
+          description="Increase your net worth through strategic investments"
+          icon="chart-line"
           isCompleted={freedoms.richer}
           onToggle={() => toggleFreedom('richer')}
-          icon="trending-up"
         />
-
-        <FreedomCard
-          title="Smarter"
-          description="Brain Abilities (10 minutes) & Relationship of Pure Focus (10 minutes)"
+        
+        <FreedomCard 
+          title="Learn Something New" 
+          description="Master a valuable skill that increases your market value"
+          icon="school"
           isCompleted={freedoms.smarter}
           onToggle={() => toggleFreedom('smarter')}
-          icon="school"
         />
-
-        <Button 
-          mode="contained" 
-          style={[styles.submitButton, {
-            backgroundColor: '#007AFF',
-            borderRadius: 12,
-            marginTop: 16,
-          }]}
-          labelStyle={{ 
-            fontFamily: 'Inter_600SemiBold',
-            fontSize: 16,
-          }}
-          onPress={() => {/* Handle submission */}}
-        >
-          Submit Score
-        </Button>
       </View>
 
       {/* Quick Access Section */}
       <View style={styles.quickAccessGrid}>
-        <Link href="/stats" asChild>
-          <QuickAccessButton icon="chart-bar" label="My Stats" />
-        </Link>
-        <Link href="/connection-log" asChild>
-          <QuickAccessButton icon="account-group" label="Connection Log" />
-        </Link>
-        <Link href="/physique-log" asChild>
-          <QuickAccessButton icon="weight-lifter" label="Physique Log" />
-        </Link>
-        <Link href="/calendar" asChild>
-          <QuickAccessButton icon="calendar" label="Calendar" />
-        </Link>
+        <QuickAccessButton 
+          icon="chart-timeline-variant" 
+          label="Track Progress" 
+          onPress={() => {}} 
+        />
+        <QuickAccessButton 
+          icon="calendar-check" 
+          label="Daily Tasks" 
+          onPress={() => {}} 
+        />
+        <QuickAccessButton 
+          icon="notebook" 
+          label="Journal" 
+          onPress={() => {}} 
+        />
+        <QuickAccessButton 
+          icon="account-group" 
+          label="Community" 
+          onPress={() => {}} 
+        />
       </View>
 
       {/* Help Section */}
       <View style={styles.helpContainer}>
-        <Text style={[styles.helpText, { 
-          fontFamily: 'Inter_400Regular',
-          fontSize: 16,
-          color: 'rgba(255, 255, 255, 0.7)',
-        }]}>Need Help?</Text>
-        <IconButton 
-          icon="help-circle-outline" 
-          size={24} 
-          iconColor="rgba(255, 255, 255, 0.7)"
-        />
+        <Link href="/help" asChild>
+          <Button 
+            mode="text" 
+            icon="help-circle" 
+            textColor={colors.primary}
+          >
+            Need Help?
+          </Button>
+        </Link>
       </View>
     </ScrollView>
   );
@@ -303,7 +303,6 @@ export default function Home() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#001F2D',
   },
   content: {
     padding: 16,
@@ -340,12 +339,10 @@ const styles = StyleSheet.create({
   goalTitle: {
     fontFamily: 'Inter_600SemiBold',
     fontSize: 15,
-    color: '#fff',
   },
   goalTarget: {
     fontFamily: 'Inter_400Regular',
     fontSize: 13,
-    color: 'rgba(255, 255, 255, 0.6)',
     marginTop: 2,
   },
   progressContainer: {
@@ -359,7 +356,6 @@ const styles = StyleSheet.create({
   },
   progressFill: {
     height: '100%',
-    backgroundColor: '#007AFF',
     borderRadius: 2,
   },
   freedomsContainer: {
@@ -391,13 +387,13 @@ const styles = StyleSheet.create({
     height: 28,
     borderRadius: 14,
     borderWidth: 2,
-    borderColor: '#007AFF',
+    borderColor: '#00D2E6',
     justifyContent: 'center',
     alignItems: 'center',
   },
   toggleButtonActive: {
-    backgroundColor: '#007AFF',
-    borderColor: '#007AFF',
+    backgroundColor: '#00D2E6',
+    borderColor: '#00D2E6',
   },
   quickAccessGrid: {
     flexDirection: 'row',
@@ -435,4 +431,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 8,
   },
-}); 
+});
