@@ -164,19 +164,19 @@ export default function Leaderboard() {
 
       const params = new URLSearchParams({
         type: 'points',
-        limit: '10',
+        limit: '20',
         page: '1',
       });
 
-      if (category !== 'overall') {
-        params.append('strength', category);
-      }
+      // if (category !== 'overall') {
+      //   params.append('strength', category);
+      // }
 
-      if (subCategory !== 'overall') {
-        params.append('working_on', subCategory);
-      }
+      // if (subCategory !== 'overall') {
+      //   params.append('working_on', subCategory);
+      // }
 
-      const { data } = await api.get(`${API_CONFIG.endpoints.leaderboard.list}`);
+      const { data } = await api.get(`${API_CONFIG.endpoints.leaderboard.list}?${params}`);
       console.log(data);
       setLeaderboardData(data.leaderboard);
       setPagination(data.pagination);
@@ -236,7 +236,7 @@ export default function Leaderboard() {
   return (
     <ScrollView style={[styles.container, { backgroundColor }]}>
       {/* Header with Category Selection */}
-      <View style={styles.header}>
+      {/* <View style={styles.header}>
         <View style={styles.mainTabContainer}>
           {renderSegmentedButton(
             [
@@ -255,10 +255,10 @@ export default function Leaderboard() {
             }
           )}
         </View>
-      </View>
+      </View> */}
 
       {/* Sub-category Selection */}
-      <View style={styles.subCategoryWrapper}>
+      {/* <View style={styles.subCategoryWrapper}>
         <ScrollView 
           horizontal 
           showsHorizontalScrollIndicator={false}
@@ -279,7 +279,7 @@ export default function Leaderboard() {
             }
           )}
         </ScrollView>
-      </View>
+      </View> */}
 
       {loading ? (
         <View style={[styles.centerContent, { paddingVertical: 40 }]}>
