@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { View, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
-import { Text, Surface, Avatar, Searchbar } from 'react-native-paper';
+import { View, ScrollView, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
+import { Text, Surface, Searchbar, Avatar } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Link, useRouter } from 'expo-router';
 import styles from '../../components/styles/profileStyles';
@@ -219,8 +219,14 @@ export default function Players() {
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Avatar.Image
                   size={60}
-                  source={{ uri: player.avatarUrl || 'https://via.placeholder.com/60' }}
+                  source={player.avatarUrl ? { uri: player.avatarUrl } : require('../../assets/images/icon.png')}
                   style={{ marginRight: 16 }}
+                  theme={{
+                    colors: {
+                      primary: backgroundColor,
+                      surface: backgroundColor
+                    }
+                  }}
                 />
                 <View style={{ flex: 1 }}>
                   <Text style={{ color: textColor, marginBottom: 4, fontWeight: '600' }}>
