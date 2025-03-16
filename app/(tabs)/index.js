@@ -19,7 +19,7 @@ const GoalCard = ({ title, value, icon, targetValue, isCompleted, onToggle }) =>
 
   return (
     <Surface style={[styles.goalCard, {
-      backgroundColor: isCompleted ? `${colors.primary}26` : '#FFFFFF', // 26 is 15% opacity in hex
+      backgroundColor: isCompleted ? `${colors.primary}26` : '#FFFFFF',
       borderRadius: 16,
       shadowColor: colors.primary,
       shadowOffset: { width: 0, height: 4 },
@@ -27,33 +27,34 @@ const GoalCard = ({ title, value, icon, targetValue, isCompleted, onToggle }) =>
       shadowRadius: 8,
       elevation: 4,
       borderWidth: isCompleted ? 1 : 0,
-      borderColor: `${colors.primary}4D`, // 4D is 30% opacity in hex
-      overflow: 'hidden',
+      borderColor: `${colors.primary}4D`,
     }]}>
-      <Pressable onPress={handleToggle} style={styles.goalContent}>
-        <View style={styles.goalHeader}>
-          <MaterialCommunityIcons 
-            name={icon} 
-            size={24} 
-            color={isCompleted ? colors.primary : colors.icon} 
-          />
-          <View style={[styles.toggleButton, isCompleted && styles.toggleButtonActive]}>
-            {isCompleted && <MaterialCommunityIcons name="check" size={20} color="#fff" />}
+      <View style={[{ overflow: 'hidden', borderRadius: 16, flex: 1 }]}>
+        <Pressable onPress={handleToggle} style={styles.goalContent}>
+          <View style={styles.goalHeader}>
+            <MaterialCommunityIcons 
+              name={icon} 
+              size={24} 
+              color={isCompleted ? colors.primary : colors.icon} 
+            />
+            <View style={[styles.toggleButton, isCompleted && styles.toggleButtonActive]}>
+              {isCompleted && <MaterialCommunityIcons name="check" size={20} color="#fff" />}
+            </View>
           </View>
-        </View>
-        <View>
-          <Text style={[styles.goalTitle, {
-            color: isCompleted ? colors.primary : colors.text,
-            textDecorationLine: isCompleted ? 'line-through' : 'none',
-          }]}>{title}</Text>
-          <Text style={[styles.goalTarget, {
-            fontFamily: 'Inter_400Regular',
-            fontSize: 13,
-            color: isCompleted ? `${colors.primary}B3` : colors.icon, // B3 is 70% opacity in hex
-            marginTop: 2,
-          }]}>{targetValue}</Text>
-        </View>
-      </Pressable>
+          <View>
+            <Text style={[styles.goalTitle, {
+              color: isCompleted ? colors.primary : colors.text,
+              textDecorationLine: isCompleted ? 'line-through' : 'none',
+            }]}>{title}</Text>
+            <Text style={[styles.goalTarget, {
+              fontFamily: 'Inter_400Regular',
+              fontSize: 13,
+              color: isCompleted ? `${colors.primary}B3` : colors.icon,
+              marginTop: 2,
+            }]}>{targetValue}</Text>
+          </View>
+        </Pressable>
+      </View>
     </Surface>
   );
 };
@@ -72,28 +73,30 @@ const FreedomCard = ({ title, description, isCompleted, onToggle, icon }) => {
       shadowRadius: 8,
       elevation: 4,
     }]}>
-      <Pressable onPress={onToggle} style={styles.freedomContent}>
-        <View style={styles.freedomHeader}>
-          <View style={styles.freedomTitleRow}>
-            <MaterialCommunityIcons name={icon} size={24} color={colors.icon} />
-            <Text style={[styles.freedomTitle, { 
-              fontFamily: 'Inter_600SemiBold',
-              fontSize: 16,
-              color: colors.text,
-              marginLeft: 12,
-            }]}>{title}</Text>
+      <View style={{ overflow: 'hidden', borderRadius: 16 }}>
+        <Pressable onPress={onToggle} style={styles.freedomContent}>
+          <View style={styles.freedomHeader}>
+            <View style={styles.freedomTitleRow}>
+              <MaterialCommunityIcons name={icon} size={24} color={colors.icon} />
+              <Text style={[styles.freedomTitle, { 
+                fontFamily: 'Inter_600SemiBold',
+                fontSize: 16,
+                color: colors.text,
+                marginLeft: 12,
+              }]}>{title}</Text>
+            </View>
+            <View style={[styles.toggleButton, isCompleted && styles.toggleButtonActive]}>
+              {isCompleted && <MaterialCommunityIcons name="check" size={20} color="#fff" />}
+            </View>
           </View>
-          <View style={[styles.toggleButton, isCompleted && styles.toggleButtonActive]}>
-            {isCompleted && <MaterialCommunityIcons name="check" size={20} color="#fff" />}
-          </View>
-        </View>
-        <Text style={[styles.freedomDescription, { 
-          fontFamily: 'Inter_400Regular',
-          fontSize: 14,
-          color: colors.icon,
-          marginTop: 12,
-        }]}>{description}</Text>
-      </Pressable>
+          <Text style={[styles.freedomDescription, { 
+            fontFamily: 'Inter_400Regular',
+            fontSize: 14,
+            color: colors.icon,
+            marginTop: 12,
+          }]}>{description}</Text>
+        </Pressable>
+      </View>
     </Surface>
   );
 };
@@ -114,23 +117,25 @@ const QuickAccessButton = React.forwardRef(({ icon, label, onPress, style, ...pr
         elevation: 4,
         height: 100,
       }]}>
-        <Pressable onPress={onPress} style={styles.quickAccessContent} {...props}>
-          <View style={[styles.quickAccessIcon, {
-            backgroundColor: `${colors.primary}1A`, // 1A is 10% opacity in hex
-            marginBottom: 12,
-          }]}>
-            <MaterialCommunityIcons name={icon} size={22} color={colors.primary} />
-          </View>
-          <Text 
-            style={[styles.quickAccessLabel, { 
-              fontFamily: 'Inter_500Medium',
-              fontSize: 14,
-              color: colors.text,
-              textAlign: 'center',
-            }]}
-            numberOfLines={2}
-          >{label}</Text>
-        </Pressable>
+        <View style={{ overflow: 'hidden', borderRadius: 16 }}>
+          <Pressable onPress={onPress} style={styles.quickAccessContent} {...props}>
+            <View style={[styles.quickAccessIcon, {
+              backgroundColor: `${colors.primary}1A`,
+              marginBottom: 12,
+            }]}>
+              <MaterialCommunityIcons name={icon} size={22} color={colors.primary} />
+            </View>
+            <Text 
+              style={[styles.quickAccessLabel, { 
+                fontFamily: 'Inter_500Medium',
+                fontSize: 14,
+                color: colors.text,
+                textAlign: 'center',
+              }]}
+              numberOfLines={2}
+            >{label}</Text>
+          </Pressable>
+        </View>
       </Surface>
     </View>
   );
