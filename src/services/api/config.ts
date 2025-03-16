@@ -9,6 +9,9 @@ export const API_CONFIG = {
       list: '/api/users',
       glideUsers: '/api/glide-users',
     },
+    leaderboard: {
+      list: '/api/leaderboard',
+    },
   },
   defaultHeaders: {
     'Content-Type': 'application/json',

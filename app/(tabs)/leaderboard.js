@@ -1,10 +1,12 @@
-import { useState } from 'react';
-import { View, StyleSheet, ScrollView } from 'react-native';
+import { useState, useEffect } from 'react';
+import { View, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { Text, Surface, Avatar, SegmentedButtons } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useThemeColor } from '../../hooks/useThemeColor';
+import { api } from '../../src/services/api/apiService';
+import { API_CONFIG } from '../../src/services/api/config';
 
-const TopThreeItem = ({ rank, name, score, avatarUrl }) => {
+const TopThreeItem = ({ rank, username, full_name, points, avatar_url }) => {
   const backgroundColor = useThemeColor({}, 'background');
   const cardColor = useThemeColor({}, 'card');
   const textColor = useThemeColor({}, 'text');
@@ -22,10 +24,10 @@ const TopThreeItem = ({ rank, name, score, avatarUrl }) => {
           style={styles.crown} 
         />
       )}
-      {avatarUrl ? (
+      {avatar_url ? (
         <Avatar.Image 
           size={rank === 1 ? 80 : 60} 
-          source={{ uri: avatarUrl }}
+          source={{ uri: avatar_url }}
           style={[styles.topThreeAvatar, {
             borderWidth: 2,
             borderColor: rank === 1 ? '#FFD700' : borderColor,
@@ -47,17 +49,17 @@ const TopThreeItem = ({ rank, name, score, avatarUrl }) => {
         fontSize: rank === 1 ? 16 : 14,
         color: textColor,
         letterSpacing: -0.3,
-      }]}>{name}</Text>
+      }]}>{full_name || username}</Text>
       <Text style={[styles.topThreeScore, { 
         fontFamily: 'Inter_400Regular',
         color: iconColor,
         fontSize: rank === 1 ? 15 : 13,
-      }]}>{score}</Text>
+      }]}>{points.toLocaleString()} pts</Text>
     </View>
   );
 };
 
-const LeaderboardItem = ({ rank, name, score, avatarUrl }) => {
+const LeaderboardItem = ({ rank, username, full_name, points, avatar_url }) => {
   const backgroundColor = useThemeColor({}, 'background');
   const cardColor = useThemeColor({}, 'card');
   const textColor = useThemeColor({}, 'text');
@@ -81,10 +83,10 @@ const LeaderboardItem = ({ rank, name, score, avatarUrl }) => {
           color: iconColor,
           fontSize: 15,
         }]}>#{rank}</Text>
-        {avatarUrl ? (
+        {avatar_url ? (
           <Avatar.Image 
             size={40} 
-            source={{ uri: avatarUrl }}
+            source={{ uri: avatar_url }}
             style={[styles.avatar, {
               borderWidth: 2,
               borderColor: borderColor,
@@ -107,12 +109,12 @@ const LeaderboardItem = ({ rank, name, score, avatarUrl }) => {
             color: textColor,
             fontSize: 15,
             letterSpacing: -0.3,
-          }]}>{name}</Text>
+          }]}>{full_name || username}</Text>
           <Text style={[styles.score, { 
             fontFamily: 'Inter_400Regular', 
             color: iconColor,
             fontSize: 13,
-          }]}>{score}</Text>
+          }]}>{points.toLocaleString()} pts</Text>
         </View>
       </View>
     </Surface>
@@ -129,6 +131,16 @@ export default function Leaderboard() {
 
   const [category, setCategory] = useState('athletic');
   const [subCategory, setSubCategory] = useState('overall');
+  const [leaderboardData, setLeaderboardData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [pagination, setPagination] = useState({
+    total_users: 0,
+    total_pages: 0,
+    current_page: 1,
+    limit: 10,
+    has_more: false
+  });
 
   const athleticCategories = [
     { value: 'overall', label: 'Overall' },
@@ -145,82 +157,40 @@ export default function Leaderboard() {
     { value: 'weekly', label: 'Weekly Cash' },
   ];
 
-  // Updated leaderboard data with real photos and consistent user data
-  const leaderboardData = [
-    { 
-      id: 1, 
-      rank: 1, 
-      name: 'Marcus Chen', 
-      score: '2,850 pts', 
-      avatarUrl: 'https://images.unsplash.com/photo-1600486913747-55e5470d6f40?w=400&auto=format&fit=crop&q=60' 
-    },
-    { 
-      id: 2, 
-      rank: 2, 
-      name: 'Alexander Wright', 
-      score: '2,720 pts', 
-      avatarUrl: 'https://images.unsplash.com/photo-1618088129969-bcb0c051985e?w=400&auto=format&fit=crop&q=60' 
-    },
-    { 
-      id: 3, 
-      rank: 3, 
-      name: 'David Park', 
-      score: '2,680 pts', 
-      avatarUrl: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=400&auto=format&fit=crop&q=60' 
-    },
-    { 
-      id: 4, 
-      rank: 4, 
-      name: 'James Rodriguez', 
-      score: '2,550 pts', 
-      avatarUrl: 'https://images.unsplash.com/photo-1583864697784-a0efc8379f70?w=400&auto=format&fit=crop&q=60' 
-    },
-    { 
-      id: 5, 
-      rank: 5, 
-      name: 'Thomas Weber', 
-      score: '2,480 pts', 
-      avatarUrl: 'https://images.unsplash.com/photo-1564564321837-a57b7070ac4f?w=400&auto=format&fit=crop&q=60' 
-    },
-    { 
-      id: 6, 
-      rank: 6, 
-      name: 'Michael Zhang', 
-      score: '2,420 pts', 
-      avatarUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&auto=format&fit=crop&q=60' 
-    },
-    { 
-      id: 7, 
-      rank: 7, 
-      name: 'Ryan Patel', 
-      score: '2,380 pts', 
-      avatarUrl: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&auto=format&fit=crop&q=60' 
-    },
-    { 
-      id: 8, 
-      rank: 8, 
-      name: 'Daniel Anderson', 
-      score: '2,340 pts', 
-      avatarUrl: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=400&auto=format&fit=crop&q=60' 
-    },
-    { 
-      id: 9, 
-      rank: 9, 
-      name: 'Lucas Silva', 
-      score: '2,290 pts', 
-      avatarUrl: 'https://images.unsplash.com/photo-1501196354995-cbb51c65aaea?w=400&auto=format&fit=crop&q=60' 
-    },
-    { 
-      id: 10, 
-      rank: 10, 
-      name: 'Erik Larsson', 
-      score: '2,250 pts', 
-      avatarUrl: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&auto=format&fit=crop&q=60' 
-    }
-  ];
+  const fetchLeaderboard = async () => {
+    try {
+      setLoading(true);
+      setError(null);
 
-  const topThree = leaderboardData.slice(0, 3);
-  const remainingList = leaderboardData.slice(3);
+      const params = new URLSearchParams({
+        type: 'points',
+        limit: '10',
+        page: '1',
+      });
+
+      if (category !== 'overall') {
+        params.append('strength', category);
+      }
+
+      if (subCategory !== 'overall') {
+        params.append('working_on', subCategory);
+      }
+
+      const { data } = await api.get(`${API_CONFIG.endpoints.leaderboard.list}`);
+      console.log(data);
+      setLeaderboardData(data.leaderboard);
+      setPagination(data.pagination);
+    } catch (err) {
+      console.error('Error fetching leaderboard:', err);
+      setError('Failed to load leaderboard data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLeaderboard();
+  }, [category, subCategory]);
 
   const renderSegmentedButton = (buttons, value, onValueChange, style) => (
     <SegmentedButtons
@@ -254,6 +224,14 @@ export default function Leaderboard() {
       }}
     />
   );
+
+  if (error) {
+    return (
+      <View style={[styles.container, styles.centerContent, { backgroundColor }]}>
+        <Text style={{ color: textColor }}>{error}</Text>
+      </View>
+    );
+  }
 
   return (
     <ScrollView style={[styles.container, { backgroundColor }]}>
@@ -303,21 +281,29 @@ export default function Leaderboard() {
         </ScrollView>
       </View>
 
-      {/* Top 3 Section */}
-      <View style={styles.topThreeContainer}>
-        <View style={styles.topThreeRow}>
-          {topThree.map((item) => (
-            <TopThreeItem key={item.id} {...item} />
-          ))}
+      {loading ? (
+        <View style={[styles.centerContent, { paddingVertical: 40 }]}>
+          <ActivityIndicator size="large" color={primaryColor} />
         </View>
-      </View>
+      ) : (
+        <>
+          {/* Top 3 Section */}
+          <View style={styles.topThreeContainer}>
+            <View style={styles.topThreeRow}>
+              {leaderboardData.slice(0, 3).map((item) => (
+                <TopThreeItem key={item.id} {...item} />
+              ))}
+            </View>
+          </View>
 
-      {/* Remaining List */}
-      <View style={styles.listContainer}>
-        {remainingList.map((item) => (
-          <LeaderboardItem key={item.id} {...item} />
-        ))}
-      </View>
+          {/* Remaining List */}
+          <View style={styles.listContainer}>
+            {leaderboardData.slice(3).map((item) => (
+              <LeaderboardItem key={item.id} {...item} />
+            ))}
+          </View>
+        </>
+      )}
     </ScrollView>
   );
 }
@@ -325,6 +311,11 @@ export default function Leaderboard() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  centerContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   header: {
     paddingTop: 16,
