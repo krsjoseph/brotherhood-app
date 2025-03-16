@@ -6,9 +6,9 @@ export const API_CONFIG = {
       register: '/auth/register',
     },
     users: {
+      list: '/api/users',
       glideUsers: '/api/glide-users',
     },
-    // Add more endpoint categories as needed
   },
   defaultHeaders: {
     'Content-Type': 'application/json',
