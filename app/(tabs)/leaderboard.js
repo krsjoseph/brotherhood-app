@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { View, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, ScrollView, ActivityIndicator, SafeAreaView } from 'react-native';
 import { Text, Surface, Avatar, SegmentedButtons } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useThemeColor } from '../../hooks/useThemeColor';
@@ -227,116 +227,110 @@ export default function Leaderboard() {
 
   if (error) {
     return (
-      <View style={[styles.container, styles.centerContent, { backgroundColor }]}>
-        <Text style={{ color: textColor }}>{error}</Text>
-      </View>
+      <SafeAreaView style={[styles.safeArea, { backgroundColor }]}>
+        <View style={[styles.container, styles.centerContent]}>
+          <Text style={{ color: textColor }}>{error}</Text>
+        </View>
+      </SafeAreaView>
     );
   }
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor }]}>
-      {/* Header with Category Selection */}
-      {/* <View style={styles.header}>
-        <View style={styles.mainTabContainer}>
-          {renderSegmentedButton(
-            [
-              { value: 'athletic', label: 'Athletic' },
-              { value: 'richer', label: 'Richer' },
-            ],
-            category,
-            setCategory,
-            {
-              backgroundColor: cardColor,
-              shadowColor: primaryColor,
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.1,
-              shadowRadius: 8,
-              elevation: 4,
-            }
-          )}
-        </View>
-      </View> */}
+    <SafeAreaView style={[styles.safeArea, { backgroundColor }]}>
+      <View style={styles.container}>
+        <ScrollView>
+          {/* Header with Category Selection */}
+          {/* <View style={styles.header}>
+            <View style={styles.mainTabContainer}>
+              {renderSegmentedButton(
+                [
+                  { value: 'athletic', label: 'Athletic' },
+                  { value: 'richer', label: 'Richer' },
+                ],
+                category,
+                setCategory,
+                {
+                  backgroundColor: cardColor,
+                  shadowColor: primaryColor,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 8,
+                  elevation: 4,
+                }
+              )}
+            </View>
+          </View> */}
 
-      {/* Sub-category Selection */}
-      {/* <View style={styles.subCategoryWrapper}>
-        <ScrollView 
-          horizontal 
-          showsHorizontalScrollIndicator={false}
-          style={styles.subCategoryContainer}
-          contentContainerStyle={styles.subCategoryContent}
-        >
-          {renderSegmentedButton(
-            category === 'athletic' ? athleticCategories : richerCategories,
-            subCategory,
-            setSubCategory,
-            {
-              backgroundColor: cardColor,
-              shadowColor: primaryColor,
-              shadowOffset: { width: 0, height: 4 },
-              shadowOpacity: 0.1,
-              shadowRadius: 8,
-              elevation: 4,
-            }
+          {/* Sub-category Selection */}
+          {/* <View style={styles.subCategoryWrapper}>
+            <ScrollView 
+              horizontal 
+              showsHorizontalScrollIndicator={false}
+              style={styles.subCategoryContainer}
+              contentContainerStyle={styles.subCategoryContent}
+            >
+              {renderSegmentedButton(
+                category === 'athletic' ? athleticCategories : richerCategories,
+                subCategory,
+                setSubCategory,
+                {
+                  backgroundColor: cardColor,
+                  shadowColor: primaryColor,
+                  shadowOffset: { width: 0, height: 4 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 8,
+                  elevation: 4,
+                }
+              )}
+            </ScrollView>
+          </View> */}
+
+          {loading ? (
+            <View style={[styles.centerContent, { paddingVertical: 40 }]}>
+              <ActivityIndicator size="large" color={primaryColor} />
+            </View>
+          ) : (
+            <>
+              {/* Top 3 Section */}
+              <View style={styles.topThreeContainer}>
+                <View style={styles.topThreeRow}>
+                  {leaderboardData.slice(0, 3).map((item) => (
+                    <TopThreeItem key={item.id} {...item} />
+                  ))}
+                </View>
+              </View>
+
+              {/* Remaining List */}
+              <View style={styles.listContainer}>
+                {leaderboardData.slice(3).map((item) => (
+                  <LeaderboardItem key={item.id} {...item} />
+                ))}
+              </View>
+            </>
           )}
         </ScrollView>
-      </View> */}
-
-      {loading ? (
-        <View style={[styles.centerContent, { paddingVertical: 40 }]}>
-          <ActivityIndicator size="large" color={primaryColor} />
-        </View>
-      ) : (
-        <>
-          {/* Top 3 Section */}
-          <View style={styles.topThreeContainer}>
-            <View style={styles.topThreeRow}>
-              {leaderboardData.slice(0, 3).map((item) => (
-                <TopThreeItem key={item.id} {...item} />
-              ))}
-            </View>
-          </View>
-
-          {/* Remaining List */}
-          <View style={styles.listContainer}>
-            {leaderboardData.slice(3).map((item) => (
-              <LeaderboardItem key={item.id} {...item} />
-            ))}
-          </View>
-        </>
-      )}
-    </ScrollView>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1, 
+  },
   container: {
     flex: 1,
+    marginTop: 20
   },
   centerContent: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  header: {
-    paddingTop: 16,
-    paddingBottom: 16,
-  },
-  mainTabContainer: {
-    marginHorizontal: 16,
-  },
-  subCategoryWrapper: {
-    marginHorizontal: 16,
-    marginBottom: 24,
-  },
-  subCategoryContainer: {
-    flexGrow: 0,
-  },
-  subCategoryContent: {
-    paddingRight: 16,
-  },
   topThreeContainer: {
     paddingHorizontal: 16,
     paddingBottom: 32,
+    marginTop: 20
   },
   topThreeRow: {
     flexDirection: 'row',

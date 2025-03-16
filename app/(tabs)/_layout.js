@@ -40,6 +40,7 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="leaderboard"
           options={{
+            headerShown: false,
             title: 'Leaderboard',
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons name="trophy" size={size} color={color} />
