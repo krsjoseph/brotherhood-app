@@ -7,6 +7,8 @@ import styles from '../../components/styles/profileStyles';
 import { ProfileView } from '../../components/profile/ProfileView';
 import { api } from '../../src/services/api/apiService';
 import { API_CONFIG } from '../../src/services/api/config';
+import { useThemeColor } from '../../hooks/useThemeColor';
+import { Colors } from '../../constants/Colors';
 
 export default function Players() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -18,6 +20,13 @@ export default function Players() {
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [scrollOffset, setScrollOffset] = useState(0);
   const router = useRouter();
+
+  const backgroundColor = useThemeColor({}, 'background');
+  const cardColor = useThemeColor({}, 'card');
+  const textColor = useThemeColor({}, 'text');
+  const borderColor = useThemeColor({}, 'border');
+  const iconColor = useThemeColor({}, 'icon');
+  const primaryColor = useThemeColor({}, 'primary');
 
   useEffect(() => {
     fetchPlayers();
@@ -95,20 +104,20 @@ export default function Players() {
 
   if (error) {
     return (
-      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center' }]}>
-        <Text style={{ color: 'white' }}>{error}</Text>
+      <View style={[styles.container, { justifyContent: 'center', alignItems: 'center', backgroundColor }]}>
+        <Text style={{ color: textColor }}>{error}</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor }]}>
       <Surface style={[
         styles.headerSurface, 
         { 
-          backgroundColor: '#001F2D',
+          backgroundColor: cardColor,
           borderBottomWidth: 1,
-          borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+          borderBottomColor: borderColor,
           paddingHorizontal: 16,
           paddingVertical: 8,
           shadowColor: '#000',
@@ -124,7 +133,7 @@ export default function Players() {
           onChangeText={handleSearch}
           value={searchQuery}
           style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+            backgroundColor: backgroundColor,
             borderRadius: 12,
             height: 40,
             shadowColor: '#000',
@@ -133,22 +142,22 @@ export default function Players() {
             shadowRadius: 3,
             elevation: 3,
             borderWidth: 1,
-            borderColor: 'rgba(255, 255, 255, 0.1)',
+            borderColor: borderColor,
           }}
-          iconColor="rgba(255, 255, 255, 0.6)"
+          iconColor={iconColor}
           inputStyle={{ 
-            color: '#fff', 
+            color: textColor, 
             fontSize: 14,
             height: 40,
             marginLeft: -4,
             marginTop: -10,
           }}
-          placeholderTextColor="rgba(255, 255, 255, 0.4)"
+          placeholderTextColor={iconColor}
         />
       </Surface>
 
       <ScrollView
-        style={styles.scrollView}
+        style={[styles.scrollView, { backgroundColor }]}
         onScroll={handleScroll}
         scrollEventThrottle={16}
       >
@@ -163,7 +172,9 @@ export default function Players() {
                 { 
                   marginHorizontal: 16,
                   marginBottom: 16,
-                  backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                  backgroundColor: cardColor,
+                  borderColor: borderColor,
+                  borderWidth: 1,
                 }
               ]}
             >
@@ -174,18 +185,18 @@ export default function Players() {
                   style={{ marginRight: 16 }}
                 />
                 <View style={{ flex: 1 }}>
-                  <Text style={{ color: '#fff', marginBottom: 4 }}>
+                  <Text style={{ color: textColor, marginBottom: 4, fontWeight: '600' }}>
                     {`${player.firstName} ${player.lastName}`}
                   </Text>
-                  <Text style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                  <Text style={{ color: iconColor }}>
                     {[player.city, player.country].filter(Boolean).join(', ')}
                   </Text>
                 </View>
                 <View style={{ alignItems: 'flex-end' }}>
-                  <Text style={{ color: '#fff', marginBottom: 4 }}>
+                  <Text style={{ color: textColor, marginBottom: 4 }}>
                     {player.points || 0}
                   </Text>
-                  <Text style={{ color: 'rgba(255, 255, 255, 0.6)' }}>
+                  <Text style={{ color: iconColor }}>
                     {player.level}
                   </Text>
                 </View>
@@ -198,20 +209,28 @@ export default function Players() {
                       key={index} 
                       style={[
                         styles.interestTag,
-                        { backgroundColor: 'rgba(0, 122, 255, 0.15)' }
+                        { 
+                          backgroundColor: 'rgba(0, 210, 230, 0.15)',
+                          borderColor: primaryColor,
+                          borderWidth: 1,
+                        }
                       ]}
                     >
-                      <Text style={{ color: '#007AFF' }}>{goal}</Text>
+                      <Text style={{ color: primaryColor }}>{goal}</Text>
                     </Surface>
                   ))}
                   {player.personalGoals.length > 2 && (
                     <Surface 
                       style={[
                         styles.interestTag,
-                        { backgroundColor: 'rgba(0, 122, 255, 0.15)' }
+                        { 
+                          backgroundColor: 'rgba(0, 210, 230, 0.15)',
+                          borderColor: primaryColor,
+                          borderWidth: 1,
+                        }
                       ]}
                     >
-                      <Text style={{ color: '#007AFF' }}>
+                      <Text style={{ color: primaryColor }}>
                         +{player.personalGoals.length - 2}
                       </Text>
                     </Surface>
@@ -223,7 +242,7 @@ export default function Players() {
         ))}
         {loading && (
           <View style={{ padding: 20, alignItems: 'center' }}>
-            <ActivityIndicator color="white" />
+            <ActivityIndicator color={primaryColor} />
           </View>
         )}
       </ScrollView>
