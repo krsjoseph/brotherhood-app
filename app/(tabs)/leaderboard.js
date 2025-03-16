@@ -1,10 +1,23 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { View, StyleSheet, ScrollView, ActivityIndicator, SafeAreaView } from 'react-native';
 import { Text, Surface, Avatar, SegmentedButtons } from 'react-native-paper';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 import { useThemeColor } from '../../hooks/useThemeColor';
 import { api } from '../../src/services/api/apiService';
 import { API_CONFIG } from '../../src/services/api/config';
+
+import Animated, { 
+  useAnimatedStyle, 
+  useSharedValue, 
+  withRepeat, 
+  withSequence, 
+  withTiming,
+  withSpring,
+  withDelay,
+  Easing,
+  interpolate,
+  Extrapolate
+} from 'react-native-reanimated';
 
 const TopThreeItem = ({ rank, username, full_name, points, avatar_url }) => {
   const backgroundColor = useThemeColor({}, 'background');
@@ -14,15 +27,183 @@ const TopThreeItem = ({ rank, username, full_name, points, avatar_url }) => {
   const iconColor = useThemeColor({}, 'icon');
   const primaryColor = useThemeColor({}, 'primary');
 
+  // Create shared values for animations
+  const progress = useSharedValue(0);
+  const scale = useSharedValue(1);
+  const sparkle = useSharedValue(0);
+
+  useEffect(() => {
+    const delay = rank === 1 ? 0 : rank === 2 ? 1200 : 2400;
+
+    progress.value = withDelay(
+      delay,
+      withRepeat(
+        withSequence(
+          withTiming(1, { 
+            duration: 5000, 
+            easing: Easing.inOut(Easing.quad) 
+          }),
+          withTiming(0, { 
+            duration: 5000, 
+            easing: Easing.inOut(Easing.quad) 
+          })
+        ),
+        -1,
+        true
+      )
+    );
+
+    scale.value = withDelay(
+      delay,
+      withRepeat(
+        withSequence(
+          withSpring(1.01, { 
+            damping: 25, 
+            stiffness: 25,
+            mass: 1.5
+          }),
+          withSpring(1, { 
+            damping: 25, 
+            stiffness: 25,
+            mass: 1.5
+          })
+        ),
+        -1,
+        true
+      )
+    );
+
+    if (rank === 1) {
+      sparkle.value = withRepeat(
+        withSequence(
+          withTiming(1, { 
+            duration: 3000, 
+            easing: Easing.inOut(Easing.quad) 
+          }),
+          withTiming(0, { 
+            duration: 3000, 
+            easing: Easing.inOut(Easing.quad) 
+          })
+        ),
+        -1,
+        true
+      );
+    }
+
+    return () => {
+      progress.value = 0;
+      scale.value = 1;
+      sparkle.value = 0;
+    };
+  }, [rank]);
+
+  const animatedStyle = useAnimatedStyle(() => {
+    const translateY = interpolate(
+      progress.value,
+      [0, 1],
+      [0, rank === 1 ? -6 : rank === 2 ? -4 : -3],
+      Extrapolate.CLAMP
+    );
+
+    const rotate = interpolate(
+      progress.value,
+      [0, 0.5, 1],
+      ['-0.3deg', '0deg', '0.3deg'],
+      Extrapolate.CLAMP
+    );
+
+    const shadowOpacity = interpolate(
+      progress.value,
+      [0, 1],
+      [0.05, 0.1],
+      Extrapolate.CLAMP
+    );
+
+    const shadowRadius = interpolate(
+      progress.value,
+      [0, 1],
+      [4, 6],
+      Extrapolate.CLAMP
+    );
+
+    return {
+      transform: [
+        { translateY },
+        { rotate },
+        { scale: scale.value }
+      ],
+      shadowColor: primaryColor,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity,
+      shadowRadius,
+      elevation: rank === 1 ? 4 : 2,
+    };
+  });
+
+  const crownStyle = useAnimatedStyle(() => {
+    const translateY = interpolate(
+      progress.value,
+      [0, 1],
+      [0, -1],
+      Extrapolate.CLAMP
+    );
+
+    const rotate = interpolate(
+      progress.value,
+      [0, 0.5, 1],
+      ['0.3deg', '0deg', '-0.3deg'],
+      Extrapolate.CLAMP
+    );
+
+    return {
+      transform: [
+        { translateY },
+        { rotate },
+        { scale: scale.value }
+      ]
+    };
+  });
+
+  const sparkleStyle = useAnimatedStyle(() => {
+    return {
+      opacity: interpolate(
+        sparkle.value,
+        [0, 1],
+        [0.4, 0.5],
+        Extrapolate.CLAMP
+      ),
+      transform: [
+        {
+          scale: interpolate(
+            sparkle.value,
+            [0, 1],
+            [0.95, 1.05],
+            Extrapolate.CLAMP
+          )
+        }
+      ]
+    };
+  });
+
   return (
-    <View style={[styles.topThreeItem, rank === 1 && styles.topThreeWinner]}>
+    <Animated.View style={[styles.topThreeItem, rank === 1 && styles.topThreeWinner, animatedStyle]}>
       {rank === 1 && (
-        <MaterialCommunityIcons 
-          name="crown" 
-          size={24} 
-          color="#FFD700" 
-          style={styles.crown} 
-        />
+        <>
+          <Animated.View style={crownStyle}>
+            <MaterialCommunityIcons 
+              name="crown" 
+              size={20} 
+              color="#FFD700" 
+              style={styles.crown} 
+            />
+          </Animated.View>
+          <Animated.View style={[styles.sparkleContainer, sparkleStyle]}>
+            <Ionicons name="sparkles" size={12} color="#FFD700" style={styles.sparkleTopLeft} />
+            <Ionicons name="sparkles" size={12} color="#FFD700" style={styles.sparkleTopRight} />
+            <Ionicons name="sparkles" size={12} color="#FFD700" style={styles.sparkleBottomLeft} />
+            <Ionicons name="sparkles" size={12} color="#FFD700" style={styles.sparkleBottomRight} />
+          </Animated.View>
+        </>
       )}
       {avatar_url ? (
         <Avatar.Image 
@@ -55,7 +236,7 @@ const TopThreeItem = ({ rank, username, full_name, points, avatar_url }) => {
         color: iconColor,
         fontSize: rank === 1 ? 15 : 13,
       }]}>{points.toLocaleString()} pts</Text>
-    </View>
+    </Animated.View>
   );
 };
 
@@ -374,5 +555,31 @@ const styles = StyleSheet.create({
   nameContainer: {
     flex: 1,
     gap: 2,
+  },
+  sparkleContainer: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    zIndex: 1,
+  },
+  sparkleTopLeft: {
+    position: 'absolute',
+    top: '30%',
+    left: '20%',
+  },
+  sparkleTopRight: {
+    position: 'absolute',
+    top: '30%',
+    right: '20%',
+  },
+  sparkleBottomLeft: {
+    position: 'absolute',
+    bottom: '30%',
+    left: '20%',
+  },
+  sparkleBottomRight: {
+    position: 'absolute',
+    bottom: '30%',
+    right: '20%',
   },
 });
