@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "uncomm",
-    "slug": "umcom",
+    "slug": "uncomm",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -48,13 +48,10 @@
         "origin": false
       },
       "eas": {
-        "projectId": "72231e6e-a2dc-48f7-9b48-7fa22bd9b1e5"
+        "projectId": "896ecae9-5147-4b13-92c5-b66dd5d5b49e"
       }
     },
     "owner": "krs-dev",
-    "runtimeVersion": "1.0.0",
-    "updates": {
-      "url": "https://u.expo.dev/72231e6e-a2dc-48f7-9b48-7fa22bd9b1e5"
-    }
+    "runtimeVersion": "1.0.0"
   }
 }
