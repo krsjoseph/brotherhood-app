@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
-import { View, ScrollView, TouchableOpacity, ActivityIndicator, Image } from 'react-native';
-import { Text, Surface, Searchbar, Avatar } from 'react-native-paper';
+import { View, ScrollView, TouchableOpacity, ActivityIndicator, Image, SafeAreaView } from 'react-native';
+import { Text, Searchbar, Avatar } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { Link, useRouter } from 'expo-router';
 import styles from '../../components/styles/profileStyles';
@@ -149,23 +149,18 @@ export default function Players() {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor }]}>
-      <Surface style={[
-        styles.headerSurface, 
-        { 
-          backgroundColor: cardColor,
-          borderBottomWidth: 1,
-          borderBottomColor: borderColor,
-          paddingHorizontal: 16,
-          paddingVertical: 8,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 2 },
-          shadowOpacity: shadowOpacity,
-          shadowRadius: 4,
-          elevation: scrollOffset > 0 ? 4 : 0,
-          zIndex: 1,
-        }
-      ]}>
+    <SafeAreaView style={[styles.container, { backgroundColor }]}>
+      <View style={{
+        backgroundColor: cardColor,
+        paddingHorizontal: 16,
+        paddingVertical: 8,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 2,
+        zIndex: 1,
+      }}>
         <Searchbar
           placeholder="Search players"
           onChangeText={handleSearch}
@@ -175,10 +170,10 @@ export default function Players() {
             borderRadius: 12,
             height: 40,
             shadowColor: '#000',
-            shadowOffset: { width: 0, height: 2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 3,
-            elevation: 3,
+            shadowOffset: { width: 0, height: 1 },
+            shadowOpacity: 0.1,
+            shadowRadius: 2,
+            elevation: 1,
             borderWidth: 1,
             borderColor: borderColor,
           }}
@@ -192,7 +187,7 @@ export default function Players() {
           }}
           placeholderTextColor={iconColor}
         />
-      </Surface>
+      </View>
 
       <ScrollView
         style={[styles.scrollView, { backgroundColor }]}
@@ -204,15 +199,20 @@ export default function Players() {
             key={player.id}
             // onPress={() => handlePlayerPress(player)}
           >
-            <Surface 
+            <View 
               style={[
                 styles.section, 
                 { 
-                  marginHorizontal: 16,
-                  marginBottom: 16,
                   backgroundColor: cardColor,
-                  borderColor: borderColor,
-                  borderWidth: 1,
+                  borderRadius: 12,
+                  marginHorizontal: 16,
+                  marginVertical: 8,
+                  padding: 16,
+                  shadowColor: '#000',
+                  shadowOffset: { width: 0, height: 1 },
+                  shadowOpacity: 0.1,
+                  shadowRadius: 2,
+                  elevation: 1,
                 }
               ]}
             >
@@ -249,7 +249,7 @@ export default function Players() {
               {player.personalGoals && (
                 <View style={{ flexDirection: 'row', marginTop: 16, flexWrap: 'wrap', gap: 8 }}>
                   {player.personalGoals.slice(0, 2).map((goal, index) => (
-                    <Surface 
+                    <View 
                       key={index} 
                       style={[
                         styles.interestTag,
@@ -261,10 +261,10 @@ export default function Players() {
                       ]}
                     >
                       <Text style={{ color: primaryColor }}>{goal}</Text>
-                    </Surface>
+                    </View>
                   ))}
                   {player.personalGoals.length > 2 && (
-                    <Surface 
+                    <View 
                       style={[
                         styles.interestTag,
                         { 
@@ -277,11 +277,11 @@ export default function Players() {
                       <Text style={{ color: primaryColor }}>
                         +{player.personalGoals.length - 2}
                       </Text>
-                    </Surface>
+                    </View>
                   )}
                 </View>
               )}
-            </Surface>
+            </View>
           </TouchableOpacity>
         ))}
         {(loading || loadingMore) && (
@@ -293,6 +293,6 @@ export default function Players() {
           </View>
         )}
       </ScrollView>
-    </View>
+    </SafeAreaView>
   );
 }

@@ -49,6 +49,7 @@ export default function TabsLayout() {
         <Tabs.Screen
           name="players"
           options={{
+            headerShown: false,
             title: 'Players',
             tabBarIcon: ({ color, size }) => (
               <MaterialCommunityIcons name="account-group" size={size} color={color} />
