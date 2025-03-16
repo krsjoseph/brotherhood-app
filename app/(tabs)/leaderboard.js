@@ -1,103 +1,132 @@
 import { useState } from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
-import { Text, Surface, Avatar, SegmentedButtons, useTheme } from 'react-native-paper';
+import { Text, Surface, Avatar, SegmentedButtons } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { useThemeColor } from '../../hooks/useThemeColor';
 
-const TopThreeItem = ({ rank, name, score, avatarUrl }) => (
-  <View style={[styles.topThreeItem, rank === 1 && styles.topThreeWinner]}>
-    {rank === 1 && (
-      <MaterialCommunityIcons 
-        name="crown" 
-        size={24} 
-        color="#FFD700" 
-        style={styles.crown} 
-      />
-    )}
-    {avatarUrl ? (
-      <Avatar.Image 
-        size={rank === 1 ? 80 : 60} 
-        source={{ uri: avatarUrl }}
-        style={[styles.topThreeAvatar, {
-          borderWidth: 2,
-          borderColor: rank === 1 ? '#FFD700' : 'rgba(255, 255, 255, 0.1)',
-        }]}
-      />
-    ) : (
-      <Avatar.Icon
-        size={rank === 1 ? 80 : 60}
-        icon={props => <MaterialCommunityIcons name="account" {...props} size={rank === 1 ? 48 : 36} />}
-        style={[styles.topThreeAvatar, {
-          backgroundColor: '#007AFF',
-          borderWidth: 2,
-          borderColor: rank === 1 ? '#FFD700' : 'rgba(255, 255, 255, 0.1)',
-        }]}
-      />
-    )}
-    <Text style={[styles.topThreeName, { 
-      fontFamily: 'Inter_600SemiBold',
-      fontSize: rank === 1 ? 16 : 14,
-      color: '#fff',
-      letterSpacing: -0.3,
-    }]}>{name}</Text>
-    <Text style={[styles.topThreeScore, { 
-      fontFamily: 'Inter_400Regular',
-      color: 'rgba(255, 255, 255, 0.7)',
-      fontSize: rank === 1 ? 15 : 13,
-    }]}>{score}</Text>
-  </View>
-);
+const TopThreeItem = ({ rank, name, score, avatarUrl }) => {
+  const backgroundColor = useThemeColor({}, 'background');
+  const cardColor = useThemeColor({}, 'card');
+  const textColor = useThemeColor({}, 'text');
+  const borderColor = useThemeColor({}, 'border');
+  const iconColor = useThemeColor({}, 'icon');
+  const primaryColor = useThemeColor({}, 'primary');
 
-const LeaderboardItem = ({ rank, name, score, avatarUrl }) => (
-  <Surface style={[styles.leaderboardItem, {
-    backgroundColor: 'rgba(255, 255, 255, 0.03)',
-    borderRadius: 16,
-    marginBottom: 8,
-  }]} elevation={1}>
-    <View style={styles.leaderboardContent}>
-      <Text style={[styles.rank, { 
-        fontFamily: 'Inter_600SemiBold', 
-        color: 'rgba(255, 255, 255, 0.4)',
-        fontSize: 15,
-      }]}>#{rank}</Text>
+  return (
+    <View style={[styles.topThreeItem, rank === 1 && styles.topThreeWinner]}>
+      {rank === 1 && (
+        <MaterialCommunityIcons 
+          name="crown" 
+          size={24} 
+          color="#FFD700" 
+          style={styles.crown} 
+        />
+      )}
       {avatarUrl ? (
         <Avatar.Image 
-          size={40} 
+          size={rank === 1 ? 80 : 60} 
           source={{ uri: avatarUrl }}
-          style={[styles.avatar, {
+          style={[styles.topThreeAvatar, {
             borderWidth: 2,
-            borderColor: 'rgba(255, 255, 255, 0.1)',
+            borderColor: rank === 1 ? '#FFD700' : borderColor,
           }]}
         />
       ) : (
         <Avatar.Icon
-          size={40}
-          icon={props => <MaterialCommunityIcons name="account" {...props} size={24} />}
-          style={[styles.avatar, { 
-            backgroundColor: '#007AFF',
+          size={rank === 1 ? 80 : 60}
+          icon={props => <MaterialCommunityIcons name="account" {...props} size={rank === 1 ? 48 : 36} />}
+          style={[styles.topThreeAvatar, {
+            backgroundColor: primaryColor,
             borderWidth: 2,
-            borderColor: 'rgba(255, 255, 255, 0.1)',
+            borderColor: rank === 1 ? '#FFD700' : borderColor,
           }]}
         />
       )}
-      <View style={styles.nameContainer}>
-        <Text style={[styles.name, { 
-          fontFamily: 'Inter_500Medium', 
-          color: '#fff',
-          fontSize: 15,
-          letterSpacing: -0.3,
-        }]}>{name}</Text>
-        <Text style={[styles.score, { 
-          fontFamily: 'Inter_400Regular', 
-          color: 'rgba(255, 255, 255, 0.6)',
-          fontSize: 13,
-        }]}>{score}</Text>
-      </View>
+      <Text style={[styles.topThreeName, { 
+        fontFamily: 'Inter_600SemiBold',
+        fontSize: rank === 1 ? 16 : 14,
+        color: textColor,
+        letterSpacing: -0.3,
+      }]}>{name}</Text>
+      <Text style={[styles.topThreeScore, { 
+        fontFamily: 'Inter_400Regular',
+        color: iconColor,
+        fontSize: rank === 1 ? 15 : 13,
+      }]}>{score}</Text>
     </View>
-  </Surface>
-);
+  );
+};
+
+const LeaderboardItem = ({ rank, name, score, avatarUrl }) => {
+  const backgroundColor = useThemeColor({}, 'background');
+  const cardColor = useThemeColor({}, 'card');
+  const textColor = useThemeColor({}, 'text');
+  const borderColor = useThemeColor({}, 'border');
+  const iconColor = useThemeColor({}, 'icon');
+  const primaryColor = useThemeColor({}, 'primary');
+
+  return (
+    <Surface style={[styles.leaderboardItem, {
+      backgroundColor: cardColor,
+      borderRadius: 16,
+      marginBottom: 8,
+      shadowColor: primaryColor,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
+    }]} elevation={1}>
+      <View style={styles.leaderboardContent}>
+        <Text style={[styles.rank, { 
+          fontFamily: 'Inter_600SemiBold', 
+          color: iconColor,
+          fontSize: 15,
+        }]}>#{rank}</Text>
+        {avatarUrl ? (
+          <Avatar.Image 
+            size={40} 
+            source={{ uri: avatarUrl }}
+            style={[styles.avatar, {
+              borderWidth: 2,
+              borderColor: borderColor,
+            }]}
+          />
+        ) : (
+          <Avatar.Icon
+            size={40}
+            icon={props => <MaterialCommunityIcons name="account" {...props} size={24} />}
+            style={[styles.avatar, { 
+              backgroundColor: primaryColor,
+              borderWidth: 2,
+              borderColor: borderColor,
+            }]}
+          />
+        )}
+        <View style={styles.nameContainer}>
+          <Text style={[styles.name, { 
+            fontFamily: 'Inter_500Medium', 
+            color: textColor,
+            fontSize: 15,
+            letterSpacing: -0.3,
+          }]}>{name}</Text>
+          <Text style={[styles.score, { 
+            fontFamily: 'Inter_400Regular', 
+            color: iconColor,
+            fontSize: 13,
+          }]}>{score}</Text>
+        </View>
+      </View>
+    </Surface>
+  );
+};
 
 export default function Leaderboard() {
-  const theme = useTheme();
+  const backgroundColor = useThemeColor({}, 'background');
+  const cardColor = useThemeColor({}, 'card');
+  const textColor = useThemeColor({}, 'text');
+  const borderColor = useThemeColor({}, 'border');
+  const iconColor = useThemeColor({}, 'icon');
+  const primaryColor = useThemeColor({}, 'primary');
+
   const [category, setCategory] = useState('athletic');
   const [subCategory, setSubCategory] = useState('overall');
 
@@ -207,19 +236,19 @@ export default function Leaderboard() {
         labelStyle: {
           fontFamily: 'Inter_500Medium',
           fontSize: 17,
-          color: button.value === value ? '#fff' : 'rgba(255, 255, 255, 0.6)',
+          color: button.value === value ? textColor : iconColor,
           lineHeight: 22,
         },
       }))}
       style={[{
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        backgroundColor: cardColor,
         borderRadius: 100,
       }, style]}
       theme={{
         colors: {
           secondaryContainer: 'transparent',
-          onSecondaryContainer: '#fff',
-          primary: '#fff',
+          onSecondaryContainer: textColor,
+          primary: primaryColor,
           outline: 'transparent',
         },
       }}
@@ -227,7 +256,7 @@ export default function Leaderboard() {
   );
 
   return (
-    <ScrollView style={[styles.container, { backgroundColor: '#001F2D' }]}>
+    <ScrollView style={[styles.container, { backgroundColor }]}>
       {/* Header with Category Selection */}
       <View style={styles.header}>
         <View style={styles.mainTabContainer}>
@@ -238,7 +267,14 @@ export default function Leaderboard() {
             ],
             category,
             setCategory,
-            styles.categoryButtons
+            {
+              backgroundColor: cardColor,
+              shadowColor: primaryColor,
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.1,
+              shadowRadius: 8,
+              elevation: 4,
+            }
           )}
         </View>
       </View>
@@ -255,7 +291,14 @@ export default function Leaderboard() {
             category === 'athletic' ? athleticCategories : richerCategories,
             subCategory,
             setSubCategory,
-            styles.subCategoryButtons
+            {
+              backgroundColor: cardColor,
+              shadowColor: primaryColor,
+              shadowOffset: { width: 0, height: 4 },
+              shadowOpacity: 0.1,
+              shadowRadius: 8,
+              elevation: 4,
+            }
           )}
         </ScrollView>
       </View>
@@ -290,9 +333,6 @@ const styles = StyleSheet.create({
   mainTabContainer: {
     marginHorizontal: 16,
   },
-  categoryButtons: {
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
-  },
   subCategoryWrapper: {
     marginHorizontal: 16,
     marginBottom: 24,
@@ -302,9 +342,6 @@ const styles = StyleSheet.create({
   },
   subCategoryContent: {
     paddingRight: 16,
-  },
-  subCategoryButtons: {
-    backgroundColor: 'rgba(255, 255, 255, 0.08)',
   },
   topThreeContainer: {
     paddingHorizontal: 16,
@@ -330,18 +367,6 @@ const styles = StyleSheet.create({
   topThreeAvatar: {
     marginBottom: 8,
   },
-  topThreeName: {
-    color: '#fff',
-    fontSize: 14,
-    textAlign: 'center',
-    marginBottom: 4,
-  },
-  topThreeScore: {
-    color: '#fff',
-    opacity: 0.9,
-    fontSize: 12,
-    textAlign: 'center',
-  },
   listContainer: {
     paddingHorizontal: 16,
   },
@@ -365,11 +390,4 @@ const styles = StyleSheet.create({
     flex: 1,
     gap: 2,
   },
-  name: {
-    fontSize: 16,
-    marginBottom: 2,
-  },
-  score: {
-    fontSize: 14,
-  },
-}); 
+});
