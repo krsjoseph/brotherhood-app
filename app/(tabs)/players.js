@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { View, ScrollView, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { Text, Surface, Avatar, Searchbar } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -13,12 +13,16 @@ import { Colors } from '../../constants/Colors';
 export default function Players() {
   const [searchQuery, setSearchQuery] = useState('');
   const [players, setPlayers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
   const [scrollOffset, setScrollOffset] = useState(0);
+  const loadingRef = useRef(false);
+  const searchTimeoutRef = useRef(null);
+  const scrollTimeoutRef = useRef(null);
   const router = useRouter();
 
   const backgroundColor = useThemeColor({}, 'background');
@@ -30,42 +34,71 @@ export default function Players() {
 
   useEffect(() => {
     fetchPlayers();
+    return () => {
+      if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current);
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+    };
   }, []);
 
   useEffect(() => {
-    const delaySearch = setTimeout(() => {
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+
+    searchTimeoutRef.current = setTimeout(() => {
       setPage(1);
       setPlayers([]);
+      setHasMore(true);
       fetchPlayers(true);
     }, 500);
 
-    return () => clearTimeout(delaySearch);
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
   }, [searchQuery]);
 
   const fetchPlayers = async (isSearch = false) => {
     try {
-      setLoading(true);
+      if (loadingRef.current || (!hasMore && !isSearch)) {
+        return;
+      }
+
+      loadingRef.current = true;
+      isSearch ? setLoading(true) : setLoadingMore(true);
+
+      const currentPage = isSearch ? 1 : page;
       const params = new URLSearchParams({
-        page: isSearch ? 1 : page,
-        limit: 10,
+        page: currentPage.toString(),
+        limit: '10',
         ...(searchQuery && { search: searchQuery })
       });
       
       const { data } = await api.get(`${API_CONFIG.endpoints.users.list}?${params}`);
       
-      if (isSearch || page === 1) {
-        setPlayers(data.users);
+      const newUsers = data.users.filter(newUser => 
+        !players.some(existingUser => existingUser.id === newUser.id)
+      );
+      
+      if (isSearch || currentPage === 1) {
+        setPlayers(newUsers);
       } else {
-        setPlayers(prev => [...prev, ...data.users]);
+        setPlayers(prev => [...prev, ...newUsers]);
       }
       
-      setHasMore(data.users.length === 10);
+      setHasMore(newUsers.length === 10);
       setError(null);
+      
+      if (!isSearch && newUsers.length > 0) {
+        setPage(prev => prev + 1);
+      }
     } catch (err) {
       setError('Failed to load players');
       console.error('Error fetching players:', err);
     } finally {
-      setLoading(false);
+      loadingRef.current = false;
+      isSearch ? setLoading(false) : setLoadingMore(false);
     }
   };
 
@@ -74,10 +107,15 @@ export default function Players() {
   };
 
   const handleLoadMore = () => {
-    if (!loading && hasMore) {
-      setPage(prev => prev + 1);
-      fetchPlayers();
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
     }
+
+    scrollTimeoutRef.current = setTimeout(() => {
+      if (!loadingRef.current && hasMore && !loading) {
+        fetchPlayers();
+      }
+    }, 150);
   };
 
   const handlePlayerPress = (player) => {
@@ -164,7 +202,7 @@ export default function Players() {
         {players.map((player) => (
           <TouchableOpacity
             key={player.id}
-            onPress={() => handlePlayerPress(player)}
+            // onPress={() => handlePlayerPress(player)}
           >
             <Surface 
               style={[
@@ -240,9 +278,12 @@ export default function Players() {
             </Surface>
           </TouchableOpacity>
         ))}
-        {loading && (
+        {(loading || loadingMore) && (
           <View style={{ padding: 20, alignItems: 'center' }}>
             <ActivityIndicator color={primaryColor} />
+            <Text style={{ color: iconColor, marginTop: 8 }}>
+              {loading ? 'Loading players...' : 'Loading more players...'}
+            </Text>
           </View>
         )}
       </ScrollView>

@@ -165,20 +165,6 @@ export default function Home() {
     }));
   };
 
-  useEffect(() => {
-    const fetchGlideUsers = async () => {
-      try {
-        const endpoints = getEndpoints();
-        const response = await api.get(endpoints.users.glideUsers);
-        console.log('Glide Users Response:', response.data);
-      } catch (error) {
-        console.error('Error fetching glide users:', error);
-      }
-    };
-
-    fetchGlideUsers(); 
-  }, []);
-
   return (
     <ScrollView style={[styles.container, { backgroundColor: colors.background }]} contentContainerStyle={styles.content}>
       {/* Header Section */}
