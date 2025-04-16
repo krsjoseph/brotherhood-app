@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Image, Alert, Platform } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 import { OnboardingData } from '../../../types/onboarding';
 
 interface Step1Props {
@@ -10,12 +11,34 @@ interface Step1Props {
 
 const Step1BasicInfo: React.FC<Step1Props> = ({ data, onDataChange }) => {
 
-  const handleSelectPicture = () => {
-    // Placeholder for image picker logic
-    // In a real app, you would use a library like react-native-image-picker
-    console.log('Select Profile Picture pressed');
-    // Example: Simulate selecting an image
-    onDataChange({ profilePictureUri: 'https://via.placeholder.com/150' });
+  const handleSelectPicture = async () => {
+    // Request Media Library permissions
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission Required', 'Sorry, we need camera roll permissions to make this work!');
+      return;
+    }
+
+    // Launch the image library
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1], // Square aspect ratio for profile pictures
+      quality: 0.8, // Compress image slightly
+    });
+
+    console.log(result); // Log the result for debugging
+
+    if (!result.canceled) {
+      // Check if assets array exists and has items
+      if (result.assets && result.assets.length > 0) {
+        onDataChange({ profilePictureUri: result.assets[0].uri });
+      } else {
+         Alert.alert('Error', 'Could not get the selected image.');
+      }
+    } else {
+      console.log('Image picker cancelled by user.');
+    }
   };
 
   return (
