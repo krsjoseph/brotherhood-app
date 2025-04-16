@@ -79,7 +79,7 @@ export default function RootLayout() {
     const checkOnboardingStatus = async () => {
       let target = null;
       try {
-        const hasCompleted = await AsyncStorage.getItem(ONBOARDING_STORAGE_KEY);
+        const hasCompleted = false//await AsyncStorage.getItem(ONBOARDING_STORAGE_KEY);
         const inAuthGroup = segments[0] === '(auth)';
         const inOnboardingRoute = segments[0] === 'onboarding';
 

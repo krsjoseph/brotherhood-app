@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { View, StyleSheet, SafeAreaView, Text, Button, Alert } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -44,12 +44,12 @@ const OnboardingScreen = () => {
     }
   };
 
-  const handleDataChange = (data: Partial<OnboardingData>) => {
+  const handleDataChange = useCallback((data: Partial<OnboardingData>) => {
     setOnboardingData((prevData) => ({
       ...prevData,
       ...data,
     }));
-  };
+  }, []);
 
   const handleComplete = async () => {
     console.log('Onboarding Complete. Data:', onboardingData);
